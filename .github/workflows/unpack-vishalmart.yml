@@ -1,0 +1,30 @@
+name: Expand VishalMart project archive
+
+on:
+  push:
+    paths:
+      - "VishalMart-project.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  install-project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract project files
+        run: |
+          unzip -q VishalMart-project.zip -d /tmp/vishalmart
+          cp -a /tmp/vishalmart/VishalMart/. .
+          rm -f VishalMart-project.zip
+          rm -f .github/workflows/unpack-vishalmart.yml
+      - name: Commit project source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Add VishalMart redesigned source and remove chatbot"
+            git push
+          fi
